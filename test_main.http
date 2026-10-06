@@ -5,6 +5,19 @@ Accept: application/json
 
 ###
 
+# Replace the path with a local document. Reuse for .ppt, .pptx, .hwp or .pdf.
+POST http://127.0.0.1:8000/api/v1/conversions/pdf
+Content-Type: multipart/form-data; boundary=local-document
+
+--local-document
+Content-Disposition: form-data; name="file"; filename="sample.docx"
+Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+
+< ./sample.docx
+--local-document--
+
+###
+
 GET http://127.0.0.1:8000/hello/User
 Accept: application/json
 

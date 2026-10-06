@@ -1,0 +1,6 @@
+fastapi==0.142.2
+uvicorn==0.54.0
+python-multipart==0.0.32
+pypdf==6.19.0
+olefile==0.47
+httpx==0.28.1

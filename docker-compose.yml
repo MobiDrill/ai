@@ -1,0 +1,57 @@
+services:
+  libreoffice:
+    build:
+      context: .
+    image: mobidrill-libreoffice:local
+    pull_policy: never
+    restart: unless-stopped
+    init: true
+    ports:
+      - "127.0.0.1:8001:8001"
+    networks:
+      - conversion
+    read_only: true
+    user: "65532:65532"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 3g
+    memswap_limit: 3g
+    cpus: 2
+    pids_limit: 256
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=1g,mode=1777
+    environment:
+      MAX_FILE_BYTES: "${MAX_FILE_BYTES:-104857600}"
+      MAX_OUTPUT_BYTES: "${MAX_OUTPUT_BYTES:-104857600}"
+      CONVERSION_TIMEOUT_SECONDS: "${CONVERSION_TIMEOUT_SECONDS:-60}"
+      MAX_CONCURRENT_CONVERSIONS: "${MAX_CONCURRENT_CONVERSIONS:-2}"
+    healthcheck:
+      test: ["CMD", "/usr/bin/python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=3).close()"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    logging:
+      driver: local
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  docling:
+    image: quay.io/docling-project/docling-serve-cpu
+    container_name: docling
+    restart: unless-stopped
+    networks:
+      - conversion
+
+    ports:
+      - "5001:5001"
+
+    environment:
+      DOCLING_SERVE_ENABLE_UI: "false"
+
+networks:
+  conversion:
+    driver: bridge

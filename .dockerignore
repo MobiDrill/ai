@@ -1,0 +1,5 @@
+*
+!deploy/
+!deploy/worker.py
+!deploy/lo_process.py
+!Dockerfile
